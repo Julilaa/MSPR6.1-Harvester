@@ -17,7 +17,7 @@ def get_local_ip():
 
 # Scanner les ports ouverts et récupérer les informations de base
 def scan_ports(ip):
-    nm = nmap.PortScanner()
+    nm = nmap.PortScanner(nmap_search_path=('C:\\Program Files (x86)\\Nmap\\nmap.exe'))
     nm.scan(ip, '1-1024')
     return nm[ip].all_protocols()
     
@@ -30,12 +30,15 @@ def post_data(data, url):
 
 # Adresse IP locale
 ip = get_local_ip()
+print(f"Adresse IP : {ip}")
 
 # Nom de la machine
 hostname = socket.gethostname()
+print(f"Nom de la machine : {hostname}")
 
 # Ports connectés
 ports = scan_ports(ip)
+print(f"Ports connectés : {ports}")
 
 # Données à envoyer
 data = {
@@ -51,9 +54,6 @@ url = 'http://votreinterfaceweb.com/post'
 result = post_data(data, url)
 print(result)
 
-print(f"Adresse IP : {ip}")
-print(f"Nom de la machine : {hostname}")
-print(f"Ports connectés : {ports}")
 
 print(f"Réponse du serveur : {result}")
 
