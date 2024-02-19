@@ -17,7 +17,7 @@ def get_local_ip():
 
 # Scanner les ports ouverts et récupérer les informations de base
 def scan_ports(ip):
-    nm = nmap.PortScanner(nmap_search_path=('C:\\Program Files (x86)\\Nmap\\nmap.exe'))
+    nm = nmap.PortScanner()
     nm.scan(ip, '1-1024')
     return nm[ip].all_protocols()
     
@@ -56,4 +56,3 @@ print(result)
 
 
 print(f"Réponse du serveur : {result}")
-
