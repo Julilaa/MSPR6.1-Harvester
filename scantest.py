@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import nmap
 import socket
-import requests 
+import requests
+import datetime 
 
 class HarvesterApp(tk.Tk):
     def __init__(self):
@@ -15,9 +16,11 @@ class HarvesterApp(tk.Tk):
 
     def scan_network(self):
         nm = nmap.PortScanner()
-        #nm.scan(hosts='192.168.1.0/24', arguments='-sV')  # Scan détaillé pour obtenir les adresses MAC et les ports
         nm.scan(hosts='172.20.10.0/24', arguments='-sV')
         connected_hosts = []
+        
+        # Obtenir l'heure actuelle et la formater en chaîne de caractères
+        scan_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         for host in nm.all_hosts():
             if nm[host]['status']['state'] == 'up':
@@ -25,7 +28,8 @@ class HarvesterApp(tk.Tk):
                     "Adresse IP": host,
                     "Nom de la machine": "N/A",
                     "Adresse MAC": nm[host]['addresses'].get('mac', 'N/A'),
-                    "Ports ouverts": []
+                    "Ports ouverts": [],
+                    "Heure du scan": scan_time 
                 }
                 try:
                     host_info["Nom de la machine"] = socket.gethostbyaddr(host)[0]
@@ -43,7 +47,7 @@ class HarvesterApp(tk.Tk):
             print(response.json())  # Afficher la réponse de l'API
 
         if connected_hosts:
-            display_info = "\n\n".join([f"Adresse IP: {host['Adresse IP']}\nNom de la machine: {host['Nom de la machine']}\nAdresse MAC: {host['Adresse MAC']}\nPorts ouverts: {', '.join(map(str, host['Ports ouverts']))}" for host in connected_hosts])
+            display_info = "\n\n".join([f"Adresse IP: {host['Adresse IP']}\nNom de la machine: {host['Nom de la machine']}\nAdresse MAC: {host['Adresse MAC']}\nPorts ouverts: {', '.join(map(str, host['Ports ouverts']))}\nHeure du scan: {host['Heure du scan']}" for host in connected_hosts])
             tk.messagebox.showinfo("Machines connectées", display_info)
         else:
             tk.messagebox.showinfo("Aucune machine connectée", "Aucune machine connectée trouvée.")
