@@ -15,7 +15,8 @@ class HarvesterApp(tk.Tk):
 
     def scan_network(self):
         nm = nmap.PortScanner()
-        nm.scan(hosts='192.168.1.0/24', arguments='-sV')  # Scan détaillé pour obtenir les adresses MAC et les ports
+        #nm.scan(hosts='192.168.1.0/24', arguments='-sV')  # Scan détaillé pour obtenir les adresses MAC et les ports
+        nm.scan(hosts='172.20.10.0/24', arguments='-sV')
         connected_hosts = []
 
         for host in nm.all_hosts():
