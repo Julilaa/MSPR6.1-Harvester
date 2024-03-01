@@ -50,7 +50,7 @@ class HarvesterApp(tk.Tk):
 
     def scan_network(self):
         nm = nmap.PortScanner()
-        nm.scan(hosts='10.60.121.0/24', arguments='-sV')
+        nm.scan(hosts='172.20.10.0/24', arguments='-sV') #172.20.10.0/24 #10.60.121.0/24
         connected_hosts = []
         
         scan_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
