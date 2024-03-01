@@ -3,7 +3,7 @@ from tkinter import messagebox
 import nmap
 import socket
 import requests
-import datetime 
+import datetime
 
 class HarvesterApp(tk.Tk):
     def __init__(self):
@@ -16,7 +16,7 @@ class HarvesterApp(tk.Tk):
 
     def scan_network(self):
         nm = nmap.PortScanner()
-        nm.scan(hosts='172.20.10.0/24', arguments='-sV')
+        nm.scan(hosts='10.60.121.0/24', arguments='-sV') # 10.60.121.0/24 # 172.20.10.0/24
         connected_hosts = []
         
         # Obtenir l'heure actuelle et la formater en chaîne de caractères
