@@ -5,6 +5,7 @@ import socket
 import requests
 import datetime
 import subprocess
+import psutil
 
 class HarvesterApp(tk.Tk):
     def __init__(self):
@@ -50,20 +51,18 @@ class HarvesterApp(tk.Tk):
 
     def scan_network(self):
         nm = nmap.PortScanner()
-        nm.scan(hosts='172.20.10.0/24', arguments='-sV') #172.20.10.0/24 #10.60.121.0/24
+        nm.scan(hosts='172.20.10.0/24', arguments='-sV')  # 10.60.121.0/24 # 172.20.10.0/24
         connected_hosts = []
         
         scan_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         for host in nm.all_hosts():
             if nm[host]['status']['state'] == 'up':
-                latency = self.ping_host(host)
                 host_info = {
                     "Adresse IP": host,
                     "Nom de la machine": socket.getfqdn(host),
                     "Adresse MAC": nm[host]['addresses'].get('mac', 'N/A'),
                     "Ports ouverts": [port for port in nm[host]['tcp'].keys() if nm[host]['tcp'][port]['state'] == 'open'],
-                    "Latence": latency,
                     "Heure du scan": scan_time 
                 }
 
@@ -71,8 +70,11 @@ class HarvesterApp(tk.Tk):
                 response = requests.post('http://localhost:5000/scan', json=host_info)
                 print(response.json())  # Afficher la réponse de l'API
 
+                # Ajouter les informations dans la liste pour affichage
+                connected_hosts.append(host_info)
+
         if connected_hosts:
-            display_info = "\n\n".join([f"Adresse IP: {host['Adresse IP']}\nNom de la machine: {host['Nom de la machine']}\nAdresse MAC: {host['Adresse MAC']}\nPorts ouverts: {', '.join(map(str, host['Ports ouverts']))}\nLatence: {host['Latence']} ms\nHeure du scan: {host['Heure du scan']}" for host in connected_hosts])
+            display_info = "\n\n".join([f"Adresse IP: {host['Adresse IP']}\nNom de la machine: {host['Nom de la machine']}\nAdresse MAC: {host['Adresse MAC']}\nPorts ouverts: {', '.join(map(str, host['Ports ouverts']))}\nHeure du scan: {host['Heure du scan']}" for host in connected_hosts])
             messagebox.showinfo("Machines connectées", display_info, parent=self)
         else:
             messagebox.showinfo("Aucune machine connectée", "Aucune machine connectée trouvée.", parent=self)
@@ -90,14 +92,32 @@ class HarvesterApp(tk.Tk):
                     mac_address = nm[host]['addresses'].get('mac', 'N/A')
                     open_ports = [port for port in nm[host]['tcp'].keys() if nm[host]['tcp'][port]['state'] == 'open']
                     scan_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    
+                    # Collecte des informations supplémentaires avec psutil
+                    cpu_usage = psutil.cpu_percent()
+                    memory_usage = psutil.virtual_memory().percent
+                    disk_usage = psutil.disk_usage('/').percent  # Changez le chemin si nécessaire
+                    users = [user.name for user in psutil.users()]
+                    battery_info = psutil.sensors_battery()
+                    if battery_info:  # Vérifiez si battery_info n'est pas None
+                        battery = battery_info.percent
+                    else:
+                        battery = "N/A"
+                    process_count = len(psutil.pids())
 
                     host_info = {
                         "Adresse IP": host,
                         "Nom de la machine": host_name,
                         "Adresse MAC": mac_address,
                         "Ports ouverts": open_ports,
-                        "Latence": latency,  # Inclure la latence dans les informations
-                        "Heure du scan": scan_time
+                        "Latence": latency,
+                        "Heure du scan": scan_time,
+                        "CPU utilisé (%)": cpu_usage,
+                        "Mémoire utilisée (%)": memory_usage,
+                        "Disque utilisé (%)": disk_usage,
+                        "Utilisateurs connectés": users,
+                        "Batterie (%)": battery,
+                        "Nombre de processus": process_count
                     }
 
                     # Envoyer les informations de la machine locale à l'API
@@ -110,6 +130,12 @@ class HarvesterApp(tk.Tk):
                         f"Adresse MAC: {mac_address}\n"
                         f"Ports ouverts: {', '.join(map(str, open_ports)) if open_ports else 'Aucun'}\n"
                         f"Latence: {latency} ms\n"
+                        f"CPU utilisé: {cpu_usage}%\n"
+                        f"Mémoire utilisée: {memory_usage}%\n"
+                        f"Disque utilisé: {disk_usage}%\n"
+                        f"Utilisateurs connectés: {', '.join(users)}\n"
+                        f"Batterie: {battery}%\n"
+                        f"Nombre de processus: {process_count}\n"
                     )
                     messagebox.showinfo("Informations de la machine locale", info, parent=self)
         else:
