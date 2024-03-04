@@ -115,10 +115,10 @@ class HarvesterApp(tk.Tk):
 
                     # Tentative d'envoi des informations de la machine locale à l'API
                     try:
-                        response = requests.post('http://localhost:5000/scan', json=host_info)
+                        response = requests.post('http://127.0.0.1:5000', json=host_info)
                         print(response.json())  # Afficher la réponse de l'API
-                    except requests.exceptions.ConnectionError:
-                        print("Impossible de se connecter à l'API.")
+                    except requests.exceptions.ConnectionError as e:
+                        print(f"Impossible de se connecter à l'API sur la machine Windows. Erreur : {e}")
 
                     info = (
                         f"Adresse IP: {host}\n"
