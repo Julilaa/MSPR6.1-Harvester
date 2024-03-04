@@ -85,7 +85,8 @@ class HarvesterApp(tk.Tk):
                     latency = self.ping_host(host)  # Ping l'hôte pour obtenir la latence
                     host_name = socket.getfqdn(host)
                     mac_address = nm[host]['addresses'].get('mac', 'N/A')
-                    open_ports = [port for port in nm[host]['tcp'].keys() if nm[host]['tcp'][port]['state'] == 'open']
+                    # Vérifie si 'tcp' existe dans le dictionnaire pour cet hôte avant d'essayer d'accéder à ses ports
+                    open_ports = [port for port in nm[host].get('tcp', {}).keys() if nm[host]['tcp'][port]['state'] == 'open']
                     scan_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                     
                     # Collecte des informations supplémentaires avec psutil
@@ -112,9 +113,12 @@ class HarvesterApp(tk.Tk):
                         "Nombre de processus": process_count
                     }
 
-                    # Envoyer les informations de la machine locale à l'API
-                    response = requests.post('http://localhost:5000/scan', json=host_info)
-                    print(response.json())  # Afficher la réponse de l'API
+                    # Tentative d'envoi des informations de la machine locale à l'API
+                    try:
+                        response = requests.post('http://localhost:5000/scan', json=host_info)
+                        print(response.json())  # Afficher la réponse de l'API
+                    except requests.exceptions.ConnectionError:
+                        print("Impossible de se connecter à l'API.")
 
                     info = (
                         f"Adresse IP: {host}\n"
@@ -132,6 +136,7 @@ class HarvesterApp(tk.Tk):
                     messagebox.showinfo("Informations de la machine locale", info, parent=self)
         else:
             messagebox.showinfo("Erreur", "Impossible de récupérer les informations de la machine locale.", parent=self)
+
 
 if __name__ == "__main__":
     app = HarvesterApp()
