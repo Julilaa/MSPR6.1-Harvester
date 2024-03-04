@@ -11,7 +11,7 @@ class HarvesterApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Harvester Network Scanner")
+        self.title("Linux Harvester Network Scanner")
         self.geometry("600x400")
 
         self.style = ttk.Style(self)
@@ -63,9 +63,12 @@ class HarvesterApp(tk.Tk):
                     "Heure du scan": scan_time 
                 }
 
-                response = requests.post('http://localhost:5000/scan', json=host_info)
-                print(response.json())
-
+                # Tentative d'envoi des informations de la machine locale à l'API
+                try:
+                    response = requests.post('http://172.20.10.2:5000/scan', json=host_info)
+                    print(response.json())  # Afficher la réponse de l'API
+                except requests.exceptions.ConnectionError as e:
+                    print(f"Impossible de se connecter à l'API sur la machine Windows. Erreur : {e}")
                 connected_hosts.append(host_info)
 
         if connected_hosts:
@@ -115,7 +118,7 @@ class HarvesterApp(tk.Tk):
 
                     # Tentative d'envoi des informations de la machine locale à l'API
                     try:
-                        response = requests.post('http://127.0.0.1:5000', json=host_info)
+                        response = requests.post('http://172.20.10.2:5000/scan', json=host_info)
                         print(response.json())  # Afficher la réponse de l'API
                     except requests.exceptions.ConnectionError as e:
                         print(f"Impossible de se connecter à l'API sur la machine Windows. Erreur : {e}")

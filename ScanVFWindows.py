@@ -11,7 +11,7 @@ class HarvesterApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Harvester Network Scanner")
+        self.title("Windows Harvester Network Scanner")
         self.geometry("600x400")
 
         # Configuration des styles
