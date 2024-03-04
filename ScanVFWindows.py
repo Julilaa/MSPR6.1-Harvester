@@ -38,7 +38,7 @@ class HarvesterApp(tk.Tk):
 
     def ping_host(self, ip):
         """Effectue un ping sur l'hôte et renvoie la latence."""
-        command = ['ping', '-c', '1', ip]
+        command = ['ping', '-n', '1', ip]
         try:
             output = subprocess.check_output(command, stderr=subprocess.STDOUT, universal_newlines=True)
             for line in output.splitlines():
@@ -121,8 +121,12 @@ class HarvesterApp(tk.Tk):
                     }
 
                     # Envoyer les informations de la machine locale à l'API
-                    response = requests.post('http://localhost:5000/scan', json=host_info)
-                    print(response.json())  # Afficher la réponse de l'API
+                    try:
+                        response = requests.post('http://localhost:5000/scan', json=host_info)
+                        print(response.json())  # Afficher la réponse de l'API
+                    except requests.exceptions.RequestException as e:  # Gérer toutes les exceptions pour les requêtes
+                        print(f"Erreur lors de l'envoi des données à l'API: {e}")
+                        messagebox.showinfo("Erreur", f"Impossible d'envoyer les données à l'API: {e}", parent=self)
 
                     info = (
                         f"Adresse IP: {host}\n"
