@@ -48,7 +48,7 @@ class HarvesterApp(tk.Tk):
 
     def scan_network(self):
         nm = nmap.PortScanner()
-        nm.scan(hosts='172.20.10.0/24', arguments='-sV')
+        nm.scan(hosts='127.0.0.0/24', arguments='-sV')
         connected_hosts = []
         
         scan_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -59,7 +59,7 @@ class HarvesterApp(tk.Tk):
                     "Adresse IP": host,
                     "Nom de la machine": socket.getfqdn(host),
                     "Adresse MAC": nm[host]['addresses'].get('mac', 'N/A'),
-                    "Ports ouverts": [port for port in nm[host]['tcp'].keys() if nm[host]['tcp'][port]['state'] == 'open'],
+                    "Ports ouverts": [port for port in nm[host].get('tcp', {}).keys() if nm[host]['tcp'][port]['state'] == 'open'],
                     "Heure du scan": scan_time 
                 }
 
