@@ -15,30 +15,42 @@ class HarvesterApp(tk.Tk):
 
         self.title("Linux Harvester Network Scanner")
         self.geometry("600x400")
+
         self.style = ttk.Style(self)
         self.style.configure('TButton', font=('Helvetica', 12), borderwidth='4')
         self.style.configure('TLabel', font=('Helvetica', 14), padding=10)
+
         self.main_frame = ttk.Frame(self)
         self.main_frame.pack(expand=True, fill=tk.BOTH, padx=20, pady=20)
+
         self.title_label = ttk.Label(self.main_frame, text="Network Scanner", style='TLabel')
         self.title_label.pack()
+
         self.info_label = ttk.Label(self.main_frame, text="Le scan peut durer quelques minutes, veuillez patienter...", style='TLabel')
         self.info_label.pack()
+
         self.quick_scan_button = ttk.Button(self.main_frame, text="Scan rapide (machine locale)", command=self.quick_scan, style='TButton')
         self.quick_scan_button.pack(pady=10)
+
         self.scan_button = ttk.Button(self.main_frame, text="Lancer le scan réseau complet", command=self.scan_network, style='TButton')
         self.scan_button.pack(pady=10)
 
-        # Recherche de mise à jour
+        self.update_button = ttk.Button(self.main_frame, text="Vérifier les mises à jour", command=self.check_for_updates, style='TButton')
+        self.update_button.pack(pady=10)
+
         self.github_token = os.getenv('GITHUB_TOKEN')
         self.last_sha = None
-        self.check_for_updates()
 
     def check_for_updates(self):
-        github_repo = "Julilaa/MSPR6.1-Harvester"
-        current_sha = self.check_for_updates_on_github(github_repo)
-        if current_sha and current_sha != self.last_sha:
-            self.update_application(current_sha)
+        try:
+            github_repo = "VotreUtilisateur/VotreDepot"
+            current_sha = self.check_for_updates_on_github(github_repo)
+            if current_sha and current_sha != self.last_sha:
+                self.update_application(current_sha)
+            else:
+                messagebox.showinfo("À jour", "Votre application est déjà à jour.")
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Impossible de vérifier les mises à jour : {e}")
 
     def check_for_updates_on_github(self, github_repo):
         api_url = f"https://api.github.com/repos/{github_repo}/commits?per_page=1"
@@ -53,14 +65,17 @@ class HarvesterApp(tk.Tk):
 
     def update_application(self, current_sha):
         if messagebox.askyesno("Mise à jour disponible", "Des modifications ont été détectées. Voulez-vous mettre à jour ?"):
-            self.pull_changes()
-            messagebox.showinfo("Mise à jour", "L'application a été mise à jour.")
-            self.last_sha = current_sha
+            try:
+                self.pull_changes()
+                messagebox.showinfo("Mise à jour", "L'application a été mise à jour.")
+                self.last_sha = current_sha
+            except subprocess.CalledProcessError as e:
+                messagebox.showerror("Erreur", f"Échec de la mise à jour : {e}")
 
     def pull_changes(self):
-        subprocess.run(["git", "stash", "push"], check=True)  # Stash les changements actuels
-        subprocess.run(["git", "pull"], check=True)  # Pull les derniers changements
-        subprocess.run(["git", "stash", "pop"], check=True)  # Applique les changements stashés
+        subprocess.run(["git", "stash", "push"], check=True)
+        subprocess.run(["git", "pull"], check=True)
+        subprocess.run(["git", "stash", "pop"], check=True)
 
     def ping_host(self, ip):
         """Effectue un ping sur l'hôte et renvoie la latence."""
