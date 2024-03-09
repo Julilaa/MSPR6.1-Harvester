@@ -6,6 +6,8 @@ import requests
 import datetime
 import subprocess
 import psutil
+import json
+import os
 
 class HarvesterApp(tk.Tk):
     def __init__(self):
@@ -116,12 +118,13 @@ class HarvesterApp(tk.Tk):
                         "Nombre de processus": process_count
                     }
 
-                    # Tentative d'envoi des informations de la machine locale à l'API
+                    # Envoyer les informations de la machine locale à l'API
                     try:
                         response = requests.post('http://172.20.10.2:5000/scan', json=host_info)
                         print(response.json())  # Afficher la réponse de l'API
-                    except requests.exceptions.ConnectionError as e:
-                        print(f"Impossible de se connecter à l'API sur la machine Windows. Erreur : {e}")
+                    except requests.exceptions.RequestException as e:  # Gérer toutes les exceptions pour les requêtes
+                        print(f"Erreur lors de l'envoi des données à l'API: {e}")
+                        messagebox.showinfo("Erreur", f"Impossible d'envoyer les données à l'API: {e}", parent=self)
 
                     info = (
                         f"Adresse IP: {host}\n"
@@ -140,6 +143,17 @@ class HarvesterApp(tk.Tk):
         else:
             messagebox.showinfo("Erreur", "Impossible de récupérer les informations de la machine locale.", parent=self)
 
+    def save_data_locally(self, data):
+        """Sauvegarde les données scannées dans un fichier JSON en local."""
+        filename = f"scan_result_{datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
+        filepath = os.path.join('scan_results', filename)
+
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+
+        with open(filepath, 'w') as file:
+            json.dump(data, file, indent=4)
+
+        print(f"Les données ont été sauvegardées localement dans {filepath}.")
 
 if __name__ == "__main__":
     app = HarvesterApp()
