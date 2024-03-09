@@ -74,11 +74,21 @@ class HarvesterApp(tk.Tk):
 
     def pull_changes(self):
         try:
-            subprocess.run(["git", "stash", "push"], check=True)
-            subprocess.run(["git", "pull"], check=True)
-            # Remarquez que nous avons enlevé la ligne `git stash pop` pour éviter de l'appliquer automatiquement
+            # Ignorer temporairement les modifications dans scan_results
+            subprocess.run(["git", "update-index", "--assume-unchanged", "scan_results/*"], check=True)
+            
+            subprocess.run(["git", "stash", "push"], check=True)  # Enregistre les modifications locales
+            subprocess.run(["git", "pull"], check=True)  # Met à jour le répertoire de travail
+            
+            # Rétablir le suivi des modifications dans scan_results
+            subprocess.run(["git", "update-index", "--no-assume-unchanged", "scan_results/*"], check=True)
+            
         except subprocess.CalledProcessError as e:
             messagebox.showerror("Erreur de mise à jour", f"Un problème est survenu lors de la mise à jour : {e}")
+            
+            # En cas d'erreur, s'assurer que les modifications dans scan_results sont à nouveau suivies
+            subprocess.run(["git", "update-index", "--no-assume-unchanged", "scan_results/*"], check=True)
+            
             if "stash" in str(e):
                 messagebox.showinfo("Mise à jour - Gestion des modifications enregistrées",
                                     "Des modifications ont été enregistrées. Veuillez les gérer manuellement.")
