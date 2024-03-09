@@ -73,9 +73,15 @@ class HarvesterApp(tk.Tk):
                 messagebox.showerror("Erreur", f"Échec de la mise à jour : {e}")
 
     def pull_changes(self):
-        subprocess.run(["git", "stash", "push"], check=True)
-        subprocess.run(["git", "pull"], check=True)
-        subprocess.run(["git", "stash", "pop"], check=True)
+        try:
+            subprocess.run(["git", "stash", "push"], check=True)
+            subprocess.run(["git", "pull"], check=True)
+            # Remarquez que nous avons enlevé la ligne `git stash pop` pour éviter de l'appliquer automatiquement
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Erreur de mise à jour", f"Un problème est survenu lors de la mise à jour : {e}")
+            if "stash" in str(e):
+                messagebox.showinfo("Mise à jour - Gestion des modifications enregistrées",
+                                    "Des modifications ont été enregistrées. Veuillez les gérer manuellement.")
 
     def ping_host(self, ip):
         """Effectue un ping sur l'hôte et renvoie la latence."""
