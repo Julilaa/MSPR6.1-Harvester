@@ -68,6 +68,8 @@ class HarvesterApp(tk.Tk):
                     "Heure du scan": scan_time 
                 }
 
+                self.save_data_locally(host_info)
+
                 # Tentative d'envoi des informations de la machine locale à l'API
                 try:
                     response = requests.post('http://127.0.0.1:5000/scan', json=host_info)
@@ -122,6 +124,8 @@ class HarvesterApp(tk.Tk):
                         "Batterie (%)": battery,
                         "Nombre de processus": process_count
                     }
+
+                    self.save_data_locally(host_info)
 
                     # Envoyer les informations de la machine locale à l'API
                     try:
