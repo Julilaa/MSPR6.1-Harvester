@@ -43,7 +43,7 @@ class HarvesterApp(tk.Tk):
 
     def check_for_updates(self):
         try:
-            github_repo = "VotreUtilisateur/VotreDepot"
+            github_repo = "Julilaa/MSPR6.1-Harvester"
             current_sha = self.check_for_updates_on_github(github_repo)
             if current_sha and current_sha != self.last_sha:
                 self.update_application(current_sha)
