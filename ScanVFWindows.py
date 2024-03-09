@@ -6,22 +6,20 @@ import requests
 import datetime
 import subprocess
 import psutil
-import os
 import json
+import os
 
 class HarvesterApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Windows Harvester Network Scanner")
+        self.title("Linux Harvester Network Scanner")
         self.geometry("600x400")
 
-        # Configuration des styles
         self.style = ttk.Style(self)
         self.style.configure('TButton', font=('Helvetica', 12), borderwidth='4')
         self.style.configure('TLabel', font=('Helvetica', 14), padding=10)
 
-        # Mise en place de l'interface utilisateur
         self.main_frame = ttk.Frame(self)
         self.main_frame.pack(expand=True, fill=tk.BOTH, padx=20, pady=20)
 
@@ -31,12 +29,69 @@ class HarvesterApp(tk.Tk):
         self.info_label = ttk.Label(self.main_frame, text="Le scan peut durer quelques minutes, veuillez patienter...", style='TLabel')
         self.info_label.pack()
 
-        # Bouton de scan rapide placé avant le scan complet
         self.quick_scan_button = ttk.Button(self.main_frame, text="Scan rapide (machine locale)", command=self.quick_scan, style='TButton')
         self.quick_scan_button.pack(pady=10)
 
         self.scan_button = ttk.Button(self.main_frame, text="Lancer le scan réseau complet", command=self.scan_network, style='TButton')
         self.scan_button.pack(pady=10)
+
+        self.update_button = ttk.Button(self.main_frame, text="Vérifier les mises à jour", command=self.check_for_updates, style='TButton')
+        self.update_button.pack(pady=10)
+
+        self.github_token = os.getenv('GITHUB_TOKEN')
+        self.last_sha = None
+
+    def check_for_updates(self):
+        try:
+            github_repo = "Julilaa/MSPR6.1-Harvester"
+            current_sha = self.check_for_updates_on_github(github_repo)
+            if current_sha and current_sha != self.last_sha:
+                self.update_application(current_sha)
+            else:
+                messagebox.showinfo("À jour", "Votre application est déjà à jour.")
+        except Exception as e:
+            messagebox.showerror("Erreur", f"Impossible de vérifier les mises à jour : {e}")
+
+    def check_for_updates_on_github(self, github_repo):
+        api_url = f"https://api.github.com/repos/{github_repo}/commits?per_page=1"
+        headers = {'Authorization': f'token {self.github_token}'} if self.github_token else {}
+        response = requests.get(api_url, headers=headers)
+        if response.status_code == 200:
+            commits = response.json()
+            if commits and isinstance(commits, list) and len(commits) > 0:
+                last_commit_sha = commits[0]['sha']
+                return last_commit_sha
+        return None
+
+    def update_application(self, current_sha):
+        if messagebox.askyesno("Mise à jour disponible", "Des modifications ont été détectées. Voulez-vous mettre à jour ?"):
+            try:
+                self.pull_changes()
+                messagebox.showinfo("Mise à jour", "L'application a été mise à jour.")
+                self.last_sha = current_sha
+            except subprocess.CalledProcessError as e:
+                messagebox.showerror("Erreur", f"Échec de la mise à jour : {e}")
+
+    def pull_changes(self):
+        try:
+            # Ignorer temporairement les modifications dans scan_results
+            subprocess.run(["git", "update-index", "--assume-unchanged", "scan_results/*"], check=True)
+            
+            subprocess.run(["git", "stash", "push"], check=True)  # Enregistre les modifications locales
+            subprocess.run(["git", "pull"], check=True)  # Met à jour le répertoire de travail
+            
+            # Rétablir le suivi des modifications dans scan_results
+            subprocess.run(["git", "update-index", "--no-assume-unchanged", "scan_results/*"], check=True)
+            
+        except subprocess.CalledProcessError as e:
+            messagebox.showerror("Erreur de mise à jour", f"Un problème est survenu lors de la mise à jour : {e}")
+            
+            # En cas d'erreur, s'assurer que les modifications dans scan_results sont à nouveau suivies
+            subprocess.run(["git", "update-index", "--no-assume-unchanged", "scan_results/*"], check=True)
+            
+            if "stash" in str(e):
+                messagebox.showinfo("Mise à jour - Gestion des modifications enregistrées",
+                                    "Des modifications ont été enregistrées. Veuillez les gérer manuellement.")
 
     def ping_host(self, ip):
         """Effectue un ping sur l'hôte et renvoie la latence."""
