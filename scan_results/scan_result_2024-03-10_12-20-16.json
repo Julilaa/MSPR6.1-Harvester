@@ -1,0 +1,13 @@
+{
+    "Adresse IP": "172.20.10.14",
+    "Nom de la machine": "UTILISA-KT8ECMV",
+    "Adresse MAC": "N/A",
+    "Ports ouverts": [
+        135,
+        139,
+        445,
+        5357,
+        7070
+    ],
+    "Heure du scan": "2024-03-10 12:20:12"
+}

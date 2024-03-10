@@ -13,7 +13,7 @@ class HarvesterApp(tk.Tk):
     def __init__(self):
         super().__init__()
 
-        self.title("Linux Harvester Network Scanner")
+        self.title("Windows Harvester Network Scanner")
         self.geometry("600x400")
 
         self.style = ttk.Style(self)
