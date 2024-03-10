@@ -1,6 +1,6 @@
 #MSPR6.1-Harvester
 
-#Introduction
+Introduction
 Le projet Harvester Network Scanner est un outil conçu pour faciliter l'analyse et la surveillance des réseaux informatiques. Ce scanner de réseau permet de détecter les appareils connectés, d'identifier les ports ouverts permettant de déduire et de prévenir d'éventuelles vulnérabilités. L'objectif est d'offrir une vision claire de l'état de sécurité d'un réseau pour permettre aux utilisateurs d'agir proactivement contre les risques potentiels.
 Ce projet trouve son utilité dans divers contextes, allant de l'usage personnel pour sécuriser les réseaux domestiques, à l'application professionnelle pour les entreprises cherchant à protéger leurs infrastructures numériques. Il est également pertinent dans le domaine éducatif, où il peut servir d'outil pédagogique pour enseigner les fondamentaux de la sécurité réseau.
 En somme, Harvester Network Scanner se positionne comme une solution pratique et accessible pour quiconque souhaite avoir une meilleure maîtrise de la connaissance de son réseau informatique afin de mieux le protéger. 
