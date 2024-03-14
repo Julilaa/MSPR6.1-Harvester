@@ -1,0 +1,16 @@
+{
+    "Adresse IP": "127.0.1.1",
+    "Nom de la machine": "PCUser1",
+    "Adresse MAC": "N/A",
+    "Ports ouverts": [],
+    "Latence": "0.049",
+    "Heure du scan": "2024-03-14 12:40:01",
+    "CPU utilis\u00e9 (%)": 72.8,
+    "M\u00e9moire utilis\u00e9e (%)": 50.2,
+    "Disque utilis\u00e9 (%)": 71.5,
+    "Utilisateurs connect\u00e9s": [
+        "user1"
+    ],
+    "Batterie (%)": "N/A",
+    "Nombre de processus": 342
+}
