@@ -142,7 +142,8 @@ class HarvesterApp(tk.Tk):
     def quick_scan(self):
         local_ip = socket.gethostbyname(socket.gethostname())
         nm = nmap.PortScanner()
-        nm.scan(hosts=local_ip, arguments='-sV')
+        # Utilisation de l'argument '-sS' pour le scan SYN, nécessite des privilèges élevés
+        nm.scan(hosts=local_ip, arguments='-sS -p 1-65535')
 
         if nm.all_hosts():
             for host in nm.all_hosts():
