@@ -1,0 +1,22 @@
+{
+    "Adresse IP": "192.168.88.1",
+    "Nom de la machine": "UTILISA-KT8ECMV",
+    "Adresse MAC": "N/A",
+    "Ports ouverts": [
+        135,
+        139,
+        445,
+        5357,
+        7070
+    ],
+    "Latence": "N/A",
+    "Heure du scan": "2024-03-14 11:51:24",
+    "CPU utilis\u00e9 (%)": 2.2,
+    "M\u00e9moire utilis\u00e9e (%)": 45.8,
+    "Disque utilis\u00e9 (%)": 0.2,
+    "Utilisateurs connect\u00e9s": [
+        "Utilisateur"
+    ],
+    "Batterie (%)": "N/A",
+    "Nombre de processus": 347
+}
