@@ -1,0 +1,24 @@
+{
+    "Adresse IP": "10.60.120.10",
+    "Nom de la machine": "MSI",
+    "Adresse MAC": "N/A",
+    "Ports ouverts": [
+        135,
+        139,
+        445,
+        902,
+        912,
+        5357,
+        7070
+    ],
+    "Latence": "N/A",
+    "Heure du scan": "2024-03-15 08:09:52",
+    "CPU utilis\u00e9 (%)": 11.9,
+    "M\u00e9moire utilis\u00e9e (%)": 52.5,
+    "Disque utilis\u00e9 (%)": 30.5,
+    "Utilisateurs connect\u00e9s": [
+        "USER"
+    ],
+    "Batterie (%)": 99,
+    "Nombre de processus": 277
+}
