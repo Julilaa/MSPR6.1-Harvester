@@ -225,7 +225,7 @@ class HarvesterApp(tk.Tk):
 
                     try:
                         # Envoi des informations collectées à l'API pour traitement et affichage.
-                        response = requests.post('http://127.0.0.1:5000/scan', json=host_info)
+                        response = requests.post('http://172.168.200.2:5000/scan', json=host_info)
                         print(response.json())  # Affichage de la réponse de l'API.
                     except requests.exceptions.RequestException as e:
                         # Gestion des erreurs de communication avec l'API.
